@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT ville (plusBeauMonument) >
+<!ATTLIST ville name CDATA #REQUIRED>
+<!ATTLIST ville departement CDATA #REQUIRED>
+<!ELEMENT plusBeauMonument EMPTY >
+<!ATTLIST plusBeauMonument name CDATA #REQUIRED>
+<!ATTLIST plusBeauMonument tarif CDATA #REQUIRED>

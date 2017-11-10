@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE ville SYSTEM "ville.dtd">
+
+<ville name='Paris' departement='75'>
+	<plusBeauMonument name='le Louvre' tarif='8€'/>
+</ville>
+

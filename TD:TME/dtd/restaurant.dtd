@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT restaurant (ville,menus)>
+<!ELEMENT menus (menu*)>
+<!ELEMENT menu EMPTY>
+<!ELEMENT ville EMPTY>
+<!ATTLIST restaurant nom CDATA #REQUIRED>
+<!ATTLIST restaurant ville IDREF #REQUIRED>
+<!ATTLIST restaurant fermeture CDATA #REQUIRED>
+<!ATTLIST restaurant etoile CDATA #REQUIRED>
+<!ATTLIST menu nom CDATA #REQUIRED>
+<!ATTLIST menu prix CDATA #REQUIRED>
+<!ATTLIST ville name ID #REQUIRED>
+

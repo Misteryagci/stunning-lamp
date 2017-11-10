@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT base (restaurant|ville)* >
+
+<!-- C1: un restaurant a toujours au moins 2 menus-->
+<!ELEMENT restaurant (fermeture?,menu,menu+) >
+<!-- C2: une ville peut avoir un plus beau monument, certaines villes n’en ont pas. -->
+<!ELEMENT ville (plusBeauMonument?) >
+<!-- C3: un monument a toujours un nom et un tarif -->
+<!ATTLIST plusBeauMonument nom CDATA #REQUIRED >
+<!ATTLIST plusBeauMonument tarif CDATA #REQUIRED >
+<!-- C4: une ville a toujours un nom et un département -->
+<!ATTLIST ville nom ID #REQUIRED >
+<!ATTLIST ville departement CDATA #REQUIRED >
+<!-- C5: un restaurant a entre 0 et 3 étoiles -->
+<!ATTLIST restaurant etoile (0|1|2|3) #REQUIRED>
+<!-- la ville d’un restaurant doit exister dans la base (i.e., il doit exister un élément ville pour chaque nom de ville référencé dans un élément restaurant) -->
+<!ATTLIST restaurant ville IDREF #REQUIRED>
+
+
+<!ATTLIST restaurant nom CDATA #REQUIRED>
+<!ATTLIST menu nom CDATA #REQUIRED>
+<!ATTLIST menu prix CDATA #REQUIRED>
+<!ELEMENT fermeture (#PCDATA)>
+<!ELEMENT menu EMPTY>
+<!ELEMENT plusBeauMonument EMPTY>

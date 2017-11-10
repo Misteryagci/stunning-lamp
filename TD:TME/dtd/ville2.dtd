@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!ELEMENT ville EMPTY >
+<!ATTLIST ville name CDATA #REQUIRED>
+<!ATTLIST ville tarif CDATA #REQUIRED>
+<!ATTLIST ville plusBeauMonument CDATA #REQUIRED>
+
+

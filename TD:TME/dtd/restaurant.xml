@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE restaurant SYSTEM "restaurant.dtd">
+
+<restaurant nom='restaurant universitaire de Paris' ville='Paris' fermeture='Le week-end' etoile='0'>
+	<ville name="Paris"></ville>
+	<menus>
+		<menu nom='Menu unique' prix='2€'></menu>
+	</menus>
+</restaurant>
