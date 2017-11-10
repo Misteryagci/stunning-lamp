@@ -257,39 +257,39 @@ base1.xml) Voici le document base1.dtd:
 
 Définir une DTD (fichier contrainte.dtd) qui permet de valider les contraintes suivantes :
 
-- **C1 :**un restaurant a toujours au moins 2 menus
+- **C1 :** un restaurant a toujours au moins 2 menus
 
 ```dtd
 <!ELEMENT restaurant (fermeture?,menu,menu+)>
 ```
 
-- **C2 :**une ville peut avoir un plus beau monument, certaines villes n’en ont pas.
+- **C2 :** une ville peut avoir un plus beau monument, certaines villes n’en ont pas.
 
 ```dtd
 <!ELEMENT ville (plusBeauMonument?)>
 ```
 
-- **C3 :**un monument a toujours un nom et un tarif
+- **C3 :** un monument a toujours un nom et un tarif
 
 ```dtd
 <!ATTLIST plusBeauMonument nom CDATA #REQUIRED>
 <!ATTLIST plusBeauMonument tarif CDATA #REQUIRED>
 ```
 
-- **C4 :**une ville a toujours un nom et un département
+- **C4 :** une ville a toujours un nom et un département
 
 ```dtd
 <!ATTLIST ville nom ID #REQUIRED>
 <!ATTLIST ville departement CDATA #REQUIRED>
 ```
 
-- **C5 :**un restaurant a entre 0 et 3 étoiles
+- **C5 :** un restaurant a entre 0 et 3 étoiles
 
 ```dtd
 <!ATTLIST restaurant etoile (0|1|2|3) #REQUIRED>
 ```
 
-- **C6 :**la ville d’un restaurant doit exister dans la base (i.e., il doit exister un élément ville pour chaque nom de ville référencé dans un élément restaurant)
+- **C6 :** la ville d’un restaurant doit exister dans la base (i.e., il doit exister un élément ville pour chaque nom de ville référencé dans un élément restaurant)
 
 ```dtd
  <!ATTLIST restaurant ville IDREF #REQUIRED>
