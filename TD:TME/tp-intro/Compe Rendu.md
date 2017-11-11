@@ -1,4 +1,4 @@
-#TME 1: Requêtes SQL
+# TME 1: Requêtes SQL
 
 ## Exercice 1: SQL sur le base MONDIAL
 
