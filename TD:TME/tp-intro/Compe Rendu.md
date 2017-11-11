@@ -515,52 +515,41 @@ ORDER BY Pourcentage;
 ```
 20. Les couples de pays européens ayant exactement accès aux mêmes mers 
 ```sql
-SELECT distinct europe1.Name,europe2.Name
+SELECT distinct pays1.country_name,pays2.country_name
 FROM (
-        SELECT *
-        FROM Encompasses codePaysEurope 
-        INNER JOIN Country paysEurope 
-        ON codePaysEurope.Continent='Europe' 
-            AND
-            codePaysEurope.Country=paysEurope.Code
-        ) europe1,
-        (
-            SELECT *
-            FROM Encompasses codePaysEurope 
-            INNER JOIN Country paysEurope 
-            ON codePaysEurope.Continent='Europe' 
-                AND
-                codePaysEurope.Country=paysEurope.Code
-        ) europe2;
-
-
-SELECT distinct seaSideEurope1.Name,seaSideEurope2.Name
-FROM (
-        SELECT paysEurope.Name,l.Sea 
-        FROM Encompasses codePaysEurope 
-        INNER JOIN Country paysEurope 
-        ON codePaysEurope.Continent='Europe' 
-            AND
-            codePaysEurope.Country=paysEurope.Code
-        INNER JOIN Located l
-        ON l.Sea IS NOT NULL 
-            AND l.Country=paysEurope.Code
-      ) seaSideEurope1,
-      (
-        SELECT paysEurope.Name,l.Sea 
-        FROM Encompasses codePaysEurope 
-        INNER JOIN Country paysEurope 
-        ON codePaysEurope.Continent='Europe' 
-            AND
-            codePaysEurope.Country=paysEurope.Code
-        INNER JOIN Located l
-        ON l.Sea IS NOT NULL 
-            AND l.Country=paysEurope.Code
-      ) seaSideEurope2
-WHERE seaSideEurope1.Sea<>seaSideEurope2.Sea
+        SELECT country_name, sea_name
+        FROM (
+                SELECT distinct paysEurope.Name as country_name, l.Sea as sea_name
+                FROM Encompasses codePaysEurope 
+                INNER JOIN Country paysEurope 
+                ON codePaysEurope.Continent='Europe' 
+                    AND
+                    codePaysEurope.Country=paysEurope.Code
+                INNER JOIN Located l
+                ON l.Sea IS NOT NULL
+                   AND
+                   l.Country = paysEurope.Code
+            )
+     ) pays1,
+     (
+        SELECT country_name, sea_name
+        FROM (
+                SELECT distinct paysEurope.Name as country_name, l.Sea as sea_name
+                FROM Encompasses codePaysEurope 
+                INNER JOIN Country paysEurope 
+                ON codePaysEurope.Continent='Europe' 
+                    AND
+                    codePaysEurope.Country=paysEurope.Code
+                INNER JOIN Located l
+                ON l.Sea IS NOT NULL
+                   AND
+                   l.Country = paysEurope.Code
+            )
+     ) pays2
+WHERE pays1.country_name <> pays2.country_name
       AND
-      seaSideEurope1.Name <> seaSideEurope2.Name
-      ;
+      pays1.sea_name <> pays2.sea_name
+     ;
 ```
 **Bonus** Pour chaque pays, la longueur de la frontière 
 ```sql
@@ -608,5 +597,124 @@ INNER JOIN Geo_Mountain gm
 ON gm.Country=codePaysAmerique.Country 
 INNER JOIN Mountain mountains 
 ON gm.Mountain=mountains.Name;
+```
+
+
+
+**Bonus** Pour chaque pays d'Europe le nombre de mers qu'ils ont accès
+```sql
+SELECT country_name, count(sea_name) 
+FROM (
+        SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+        FROM Encompasses codePaysEurope 
+        INNER JOIN Country paysEurope 
+        ON codePaysEurope.Continent='Europe' 
+            AND
+            codePaysEurope.Country=paysEurope.Code
+        INNER JOIN Geo_sea sea
+        ON sea.Country = paysEurope.Code
+)
+GROUP BY country_name;
+```
+
+**Bonus** Les pays d'europe au bord de mer
+```sql
+SELECT distinct country_name 
+FROM (
+        SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+        FROM Encompasses codePaysEurope 
+        INNER JOIN Country paysEurope 
+        ON codePaysEurope.Continent='Europe' 
+            AND
+            codePaysEurope.Country=paysEurope.Code
+        INNER JOIN Geo_sea sea
+        ON sea.Country = paysEurope.Code
+);
+```
+
+**Bonus** Pour chaque pays d'Europe les noms de mers qu'ils ont accès
+```sql
+SELECT country_name, sea_name
+FROM (
+        SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+        FROM Encompasses codePaysEurope 
+        INNER JOIN Country paysEurope 
+        ON codePaysEurope.Continent='Europe' 
+            AND
+            codePaysEurope.Country=paysEurope.Code
+        INNER JOIN Geo_sea sea
+        ON sea.Country = paysEurope.Code
+    )
+ORDER BY sea_name;
+```
+
+**Bonus** Les pays européens n'ayant accès aux différents mers
+```sql
+SELECT distinct pays1.country_name,pays2.country_name
+FROM (
+        SELECT country_name, sea_name
+        FROM (
+                SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+                FROM Encompasses codePaysEurope 
+                INNER JOIN Country paysEurope 
+                ON codePaysEurope.Continent='Europe' 
+                    AND
+                    codePaysEurope.Country=paysEurope.Code
+                INNER JOIN Geo_sea sea
+                ON sea.Country = paysEurope.Code
+            )
+     ) pays1,
+     (
+        SELECT country_name, sea_name
+        FROM (
+              SELECT country_name, sea_name
+              FROM (
+                    SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+                    FROM Encompasses codePaysEurope 
+                    INNER JOIN Country paysEurope 
+                    ON codePaysEurope.Continent='Europe' 
+                        AND
+                        codePaysEurope.Country=paysEurope.Code
+                    INNER JOIN Geo_sea sea
+                    ON sea.Country = paysEurope.Code
+                )
+            )
+     ) pays2
+WHERE pays1.country_name <> pays2.country_name
+      AND
+      pays1.sea_name <> pays2.sea_name;
+```
+
+**Bonus** Les couples de pays européens au bord de mers
+```sql
+SELECT c1.cname, c2.cname 
+FROM (
+        SELECT distinct country_name as cname
+        FROM (
+                SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+                FROM Encompasses codePaysEurope 
+                INNER JOIN Country paysEurope 
+                ON codePaysEurope.Continent='Europe' 
+                    AND
+                    codePaysEurope.Country=paysEurope.Code
+                INNER JOIN Geo_sea sea
+                ON sea.Country = paysEurope.Code
+        )
+      ) c1,
+      (
+        SELECT distinct country_name as cname
+        FROM (
+                SELECT distinct paysEurope.Name as country_name, sea.Sea as sea_name
+                FROM Encompasses codePaysEurope 
+                INNER JOIN Country paysEurope 
+                ON codePaysEurope.Continent='Europe' 
+                    AND
+                    codePaysEurope.Country=paysEurope.Code
+                INNER JOIN Geo_sea sea
+                ON sea.Country = paysEurope.Code
+        )
+      ) c2
+WHERE c1.cname<>c2.cname;
+;
 ```
 
