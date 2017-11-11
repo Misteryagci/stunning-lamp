@@ -515,42 +515,10 @@ ORDER BY Pourcentage;
 ```
 20. Les couples de pays européens ayant exactement accès aux mêmes mers 
 ```sql
-SELECT distinct pays1.country_name,pays2.country_name
-FROM (
-        SELECT country_name, sea_name
-        FROM (
-                SELECT distinct paysEurope.Name as country_name, l.Sea as sea_name
-                FROM Encompasses codePaysEurope 
-                INNER JOIN Country paysEurope 
-                ON codePaysEurope.Continent='Europe' 
-                    AND
-                    codePaysEurope.Country=paysEurope.Code
-                INNER JOIN Located l
-                ON l.Sea IS NOT NULL
-                   AND
-                   l.Country = paysEurope.Code
-            )
-     ) pays1,
-     (
-        SELECT country_name, sea_name
-        FROM (
-                SELECT distinct paysEurope.Name as country_name, l.Sea as sea_name
-                FROM Encompasses codePaysEurope 
-                INNER JOIN Country paysEurope 
-                ON codePaysEurope.Continent='Europe' 
-                    AND
-                    codePaysEurope.Country=paysEurope.Code
-                INNER JOIN Located l
-                ON l.Sea IS NOT NULL
-                   AND
-                   l.Country = paysEurope.Code
-            )
-     ) pays2
-WHERE pays1.country_name <> pays2.country_name
-      AND
-      pays1.sea_name <> pays2.sea_name
-     ;
+---A compléter
 ```
+
+
 **Bonus** Pour chaque pays, la longueur de la frontière 
 ```sql
 SELECT c.Name, SUM(b.length) 
