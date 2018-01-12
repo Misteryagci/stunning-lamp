@@ -59,7 +59,7 @@
    <collection idC='c67' idU='m23'>
              <nom> Pour les copains</nom>
              <publication idP='p123' date='17-12-2015'/>
-	<publication idP='p254' date='18-12-2015'/>
+	         <publication idP='p254' date='18-12-2015'/>
     </collection>
     <collection idC='c78' idU='m56'>
              <nom> Collection publique</nom>
