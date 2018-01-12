@@ -1510,6 +1510,6 @@ Le résultat de ce requête est le suivant
     </resultats>
 ```
 
-**Réponse**=
+**Réponse**
 
 Les couples d'utilisateurs qui ont pris des photos utilisant les mêmes appareils.
