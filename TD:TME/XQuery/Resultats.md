@@ -1175,14 +1175,198 @@ alphabétique.
 - Définir la requête liste.xql qui présente la structure arborescente des éléments d'un document XML quelconque, sous la forme de listes XHTML imbriquées avec les éléments \<ul> (liste), et \<li> (élément de liste).
 
 ```xquery
-    declare namespace functx = "http://www.functx.com";
-    declare function functx:path-to-node
-    ( $nodes as node()* )  as xs:string* {
+ A COMPLETER!!
+```
+### Exercice 3
 
-    $nodes/string-join(ancestor-or-self::*/name(.), '/')
-    } ;
-    
-    let $root := name(/)
-    for $element in //*
-        return count(tokenize(functx:path-to-node($element),'/'))
+- **Structure aplatie et désimbriquée** <br>
+    Lister les joueurs avec leur classement et ordonnés par nationalité.
+
+Pour cette question on recharge la base à partir de fichier **joueurTd.xml** et on lance le requête suivant.
+
+```xquery
+    <resultats>
+        {
+        for $joueur in //joueur
+        order by $joueur/identite/nationalite
+            return 
+            <resultat>
+                { $joueur/identite/nom}
+                { $joueur/identite/prenom}
+                { $joueur/identite/nationalite} 
+                { $joueur/classement }
+            </resultat>
+        }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <resultats>
+        <resultat>
+            <nom>Hewitt</nom>
+            <prenom>Lleyton</prenom>
+            <classement>1</classement>
+            <nationalite>AUS</nationalite>
+        </resultat>
+        <resultat>
+            <nom>Arthurs</nom>
+            <prenom>Wayne</prenom>
+            <classement>55</classement>
+            <nationalite>AUS</nationalite>
+        </resultat>
+        <resultat>
+            <nom>Costa</nom>
+            <prenom>Albert</prenom>
+            <classement>8</classement>
+            <nationalite>ESP</nationalite>
+        </resultat>
+        <resultat>
+            <nom>Mathieu</nom>
+            <prenom>Paul-Henry</prenom>
+            <classement>44</classement>
+            <nationalite>FR</nationalite>
+        </resultat>
+        <resultat>
+            <nom>Clement</nom>
+            <prenom>Arnaud</prenom>
+            <classement>37</classement>
+            <nationalite>FR</nationalite>
+        </resultat>
+        <resultat>
+            <nom>Gasquet</nom>
+            <prenom>Richard</prenom>
+            <classement>124</classement>
+            <nationalite>FR</nationalite>
+        </resultat>
+    </resultats>
+```
+
+- **Rebalisage** <br/>
+    Lister les joueurs en donnant leur nom, prénom et nationalité séparés par des virgules.
+
+Pour cette question on reste toujours sur la base qu'on a chargé depuis le fichier **joueurTd.xml** et on lance le requête.
+
+```xquery
+    <resultats>
+        {
+        for $joueur in //joueur
+        order by $joueur/identite/nationalite
+            return 
+            <resultat>
+                { data($joueur/identite/nom)},{ data($joueur/identite/prenom) },{data($joueur/identite/nationalite)}
+            </resultat>
+        }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <resultats>
+    <resultat>Hewitt,Lleyton,AUS</resultat>
+    <resultat>Arthurs,Wayne,AUS</resultat>
+    <resultat>Mathieu,Paul-Henry,FR</resultat>
+    <resultat>Clement,Arnaud,FR</resultat>
+    <resultat>Costa,Albert,ESP</resultat>
+    <resultat>Gasquet,Richard,FR</resultat>
+    </resultats>
+```
+
+- **Agrégation**<br/>
+    Donner le nombre de joueurs par nationalité.
+
+```xquery
+    <resultats>
+        {
+            for $nationalite in //joueur/identite/nationalite
+            return 
+                <resultat>
+                <nationalite>
+                    { $nationalite }
+                </nationalite>
+                <nb_joueurs>
+                    { count(//joueur/identite[nationalite=$nationalite]) }
+                </nb_joueurs>
+                </resultat>
+        }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <resultats>
+        <resultat>
+            <nationalite>
+                AUS
+            </nationalite>
+            <nb_joueurs>
+                2
+            </nb_joueurs>
+        </resultat>
+        <resultat>
+            <nationalite>
+                FR
+            </nationalite>
+            <nb_joueurs>
+                3
+            </nb_joueurs>
+        </resultat>
+        <resultat>
+            <nationalite>
+                ESP
+            </nationalite>
+            <nb_joueurs>
+                1
+            </nb_joueurs>
+        </resultat>
+    </resultats>
+```
+
+- **Jointure** <br/>
+    Pour chacune des rencontres, donner le classement des deux joueurs. Seules les rencontres entre joueurs de classement inférieur à 50 sont conservées.
+
+Pour cette question on reste toujours sur la base qu'on a rechargé à partir de fichier **joueurTd.xml** et on va utiliser le ficher **rencontreTd.xml** pour les rencontres. On pouvait très bien faire l'invers (de partir sur la base à partir de fichier **rencontreTd.xml** et utiliser le fichier **joueurTd.xml** pour les classements)
+
+```xquery
+    <resultats>
+        {
+            let $rencontres := doc("/Users/ky/Google Drive/Kisisel/UPMC/MLBDA/TD:TME/XQuery/xquery/rencontreTd.xml")//rencontre
+            for $rencontre in $rencontres
+            let $rji1 := $rencontre/joueur1/identite
+            let $rji2 := $rencontre/joueur2/identite
+            let $joueurs := //joueur[classement<=50]
+            where  $joueurs[identite=$rji1] and  $joueurs[identite=$rji2]
+            return
+            <resultat>
+                { $joueurs[identite=$rji1]/classement}
+                { $joueurs[identite=$rji2]/classement}
+            </resultat>
+        }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <resultats>
+        <resultat>
+            <classement>
+                1
+            </classement>
+            <classement>
+                44
+            </classement>
+        </resultat>
+        <resultat>
+            <classement>
+                37
+            </classement
+            ><classement>
+                44
+            </classement>
+        </resultat>
+    </resultats>
 ```
