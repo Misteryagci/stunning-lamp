@@ -1,6 +1,6 @@
 # TME XQuery : séance 1
 
-Les questions de TME se trouve [ici](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery1)
+L'énoncé original de TME se trouve [ici](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery1)
 
 ## Exercice 1
 
@@ -741,4 +741,448 @@ une référence contenant le titre du livre et l’affiliation de l’éditeur.
             <title>Advanced Programming in the Unix environment</title>
         </book-pair>
     </bib>
+```
+
+# TME XQuery : séance 2
+
+L'énoncé original de TME se trouve [ici](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery2)
+
+## Exercice 1
+
+- Afficher tous les tournois (lieu,année) triés par année, puis lieu. Utiliser la fonction distinct-values(…) pour obtenir un ensemble sans doubles. Le résultat doit être [res0.txt](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery/res0.txt)
+
+On charge d'abord la base avec le fichier rencontre.xml. Et on lance les commandes suivants.
+
+```xquery
+    for $rannee in distinct-values(//rencontre/annee) , $rlieu in distinct-values(//rencontre/lieutournoi)
+    where //rencontre[annee=$rannee][lieutournoi=$rlieu]
+        let $r := //rencontre[annee=$rannee][lieutournoi=$rlieu]
+        let $a := $r/annee
+        let $l := $r/lieutournoi
+        return 
+            <tournoi lieu = "{$l}" annee="{$a}">
+            </tournoi>
+```
+
+**Résultat**
+
+```xml
+    <?xml version="1.0" encoding="ISO-8859-1"?>
+    <tournois>
+        <tournoi lieu="Flushing Meadow" annee="1989"></tournoi>
+        <tournoi lieu="Wimbledon" annee="1989"></tournoi>
+        <tournoi lieu="Roland Garros" annee="1990"></tournoi>
+        <tournoi lieu="Flushing Meadow" annee="1991"></tournoi>
+        <tournoi lieu="Roland Garros" annee="1992"></tournoi>
+        <tournoi lieu="Wimbledon" annee="1992"></tournoi>
+        <tournoi lieu="Wimbledon" annee="1993"></tournoi>
+        <tournoi lieu="Roland Garros" annee="1994"></tournoi>
+    </tournois>
+```
+
+- pour chaque tournoi (lieu, année) donner les nom et prénom des participants qui sont dans le fichier gain.xml. Le résultat doit être [res1.txt](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery/res1.txt)
+
+Pour cette question on charge la base avec le fichier gain.xml et on lance les commands suivants.
+
+```xquery
+    let $joueurs := doc("/Users/ky/Google Drive/Kisisel/UPMC/MLBDA/TD:TME/XQuery/xquery/joueur.xml")//joueur
+    let $rencontres :=  doc("/Users/ky/Google Drive/Kisisel/UPMC/MLBDA/TD:TME/XQuery/xquery/rencontre.xml")
+    for $gain in //gain
+        let $glieu := $gain/lieutournoi 
+        let $gannee := $gain/annee
+        let $rtournoi := $rencontres//rencontre[lieutournoi=$glieu][annee=$gannee]
+        let $gperdants := distinct-values($rtournoi//nuperdant)
+        let $ggagnants := distinct-values($rtournoi/nugagnant)
+        let $tnbjoueurs := distinct-values(($gperdants,$ggagnants))
+        return
+            <tournoi lieu='{$glieu}' anne='{$gannee}'>
+            {
+                for $j in $tnbjoueurs
+                let $joueur := $joueurs[nujoueur=$j]
+                return
+                <participant nom="{$joueur/nom}" prenom="{$joueur/prenom}">
+                </participant>
+            }
+            </tournoi>
+```
+
+**Résultat**
+
+```xml
+    <?xml version="1.0" encoding="ISO-8859-1"?>
+    <tournois>
+        <tournoi lieu="Flushing Meadow" annee="1989">
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="CONNORS" prenom="Jimmy"></participant>
+        </tournoi>
+        <tournoi lieu="Wimbledon" annee="1989">
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="LECONTE" prenom="Henri"></participant>
+            <participant nom="WILANDER" prenom="Mats"></participant>
+            <participant nom="CONNORS" prenom="Jimmy"></participant>
+            <participant nom="McENROE" prenom="John"></participant>
+        </tournoi>
+        <tournoi lieu="Roland Garros" annee="1990">
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="WILANDER" prenom="Mats"></participant>
+            <participant nom="CONNORS" prenom="Jimmy"></participant>
+            <participant nom="McENROE" prenom="John"></participant>
+        </tournoi>
+        <tournoi lieu="Flushing Meadow" annee="1991">
+            <participant nom="LARSSON" prenom="Magnus"></participant>
+            <participant nom="CONNORS" prenom="Jimmy"></participant>
+        </tournoi>
+        <tournoi lieu="Roland Garros" annee="1992">
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="EDBERG" prenom="Stephan"></participant>
+            <participant nom="LARSSON" prenom="Magnus"></participant>
+            <participant nom="LECONTE" prenom="Henri"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="WILANDER" prenom="Mats"></participant>
+            <participant nom="CONNORS" prenom="Jimmy"></participant>
+            <participant nom="McENROE" prenom="John"></participant>
+            <participant nom="SAMPRAS" prenom="Pete"></participant>
+        </tournoi>
+        <tournoi lieu="Wimbledon" annee="1992">
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="HALARD" prenom="Julie"></participant>
+            <participant nom="PIERCE" prenom="Mary"></participant>
+            <participant nom="EDBERG" prenom="Stephan"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="McENROE" prenom="John"></participant>
+            <participant nom="SAMPRAS" prenom="Pete"></participant>
+        </tournoi>
+        <tournoi lieu="Wimbledon" annee="1993">
+            <participant nom="MARTINEZ" prenom="Conchita"></participant>
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="HALARD" prenom="Julie"></participant>
+            <participant nom="PIERCE" prenom="Mary"></participant>
+            <participant nom="LARSSON" prenom="Magnus"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="FLEURIAN" prenom="Jean-Philippe"></participant>
+            <participant nom="SAMPRAS" prenom="Pete"></participant>
+        </tournoi>
+        <tournoi lieu="Roland Garros" annee="1994">
+            <participant nom="MARTINEZ" prenom="Conchita"></participant>
+            <participant nom="NAVRATILOVA" prenom="Martina"></participant>
+            <participant nom="GRAF" prenom="Steffi"></participant>
+            <participant nom="HALARD" prenom="Julie"></participant>
+            <participant nom="LECONTE" prenom="Henri"></participant>
+            <participant nom="FORGET" prenom="Guy"></participant>
+            <participant nom="FLEURIAN" prenom="Jean-Philippe"></participant>
+            <participant nom="SAMPRAS" prenom="Pete"></participant>
+        </tournoi>
+    </tournois>
+```
+
+- pour chaque année, donner le nombre tournois auxquels chaque joueur a participé. Le résultat doit être [res2.txt](http://www-bd.lip6.fr/wiki/site/enseignement/master/mlbda/tmes/xquery/res2.txt)
+
+On charge la base à partir de fichier rencontre.xml qui contient les rencontres entre les joueurs.
+
+```xquery
+    let $joueurs := doc("/Users/ky/Google Drive/Kisisel/UPMC/MLBDA/TD:TME/XQuery/xquery/joueur.xml")//joueur
+    for $ranne in distinct-values(//rencontre/annee)
+    return
+        <annee valeur="{$ranne}">
+        {
+            for  $joueur in $joueurs
+            where //rencontre[annee=$ranne][nuperdant=$joueur/@num] or //rencontre[annee=$ranne][nugagnant=$joueur/@num]
+            let $rperdant :=  //rencontre[annee=$ranne][nuperdant=$joueur/@num]
+            let $rgagnant :=  //rencontre[annee=$ranne][nugagnant=$joueur/@num]
+            let $jr := distinct-values(($rperdant,$rgagnant))
+            return <joueur nom="{$joueur/nom}" tournois="{count($jr)}"></joueur>
+        }
+        </annee>
+```
+
+**Résultat**
+
+```xml
+    <?xml version="1.0" encoding="ISO-8859-1"?>
+    <reponse>
+    <annee valeur="1989">
+        <joueur nom="NAVRATILOVA" tournois="2"></joueur>
+        <joueur nom="GRAF" tournois="2"></joueur>
+        <joueur nom="LECONTE" tournois="1"></joueur>
+        <joueur nom="FORGET" tournois="1"></joueur>
+        <joueur nom="WILANDER" tournois="1"></joueur>
+        <joueur nom="CONNORS" tournois="2"></joueur>
+        <joueur nom="McENROE" tournois="1"></joueur>
+    </annee>
+    <annee valeur="1990">
+        <joueur nom="NAVRATILOVA" tournois="1"></joueur>
+        <joueur nom="GRAF" tournois="1"></joueur>
+        <joueur nom="FORGET" tournois="1"></joueur>
+        <joueur nom="WILANDER" tournois="1"></joueur>
+        <joueur nom="CONNORS" tournois="1"></joueur>
+        <joueur nom="McENROE" tournois="1"></joueur>
+    </annee>
+    <annee valeur="1991">
+        <joueur nom="LARSSON" tournois="1"></joueur>
+        <joueur nom="CONNORS" tournois="1"></joueur>
+    </annee>
+    <annee valeur="1992">
+        <joueur nom="NAVRATILOVA" tournois="2"></joueur>
+        <joueur nom="GRAF" tournois="2"></joueur>
+        <joueur nom="HALARD" tournois="1"></joueur>
+        <joueur nom="PIERCE" tournois="1"></joueur>
+        <joueur nom="EDBERG" tournois="2"></joueur>
+        <joueur nom="LARSSON" tournois="1"></joueur>
+        <joueur nom="LECONTE" tournois="1"></joueur>
+        <joueur nom="FORGET" tournois="2"></joueur>
+        <joueur nom="WILANDER" tournois="1"></joueur>
+        <joueur nom="CONNORS" tournois="1"></joueur>
+        <joueur nom="McENROE" tournois="2"></joueur>
+        <joueur nom="SAMPRAS" tournois="2"></joueur>
+    </annee>
+    <annee valeur="1993">
+        <joueur nom="MARTINEZ" tournois="1"></joueur>
+        <joueur nom="NAVRATILOVA" tournois="1"></joueur>
+        <joueur nom="HALARD" tournois="1"></joueur>
+        <joueur nom="PIERCE" tournois="1"></joueur>
+        <joueur nom="LARSSON" tournois="1"></joueur>
+        <joueur nom="FORGET" tournois="1"></joueur>
+        <joueur nom="FLEURIAN" tournois="1"></joueur>
+        <joueur nom="SAMPRAS" tournois="1"></joueur>
+    </annee>
+    <annee valeur="1994">
+        <joueur nom="MARTINEZ" tournois="1"></joueur>
+        <joueur nom="NAVRATILOVA" tournois="1"></joueur>
+        <joueur nom="GRAF" tournois="1"></joueur>
+        <joueur nom="HALARD" tournois="1"></joueur>
+        <joueur nom="LECONTE" tournois="1"></joueur>
+        <joueur nom="FORGET" tournois="1"></joueur>
+        <joueur nom="FLEURIAN" tournois="1"></joueur>
+        <joueur nom="SAMPRAS" tournois="1"></joueur>
+    </annee>
+    </reponse>
+```
+
+## Exercice 2
+
+- L'exercice 2 de TD a été fait lors de la séance 1. Il reste les exercicees 1 et 3 à faire.
+
+### Exercice 1
+
+#### 1) Requêtes
+
+On charge la base à partir de fichier guide.xml
+
+-  Donner le nom de tous les menus des restaurants
+
+
+```xquery
+    <results>
+        {
+            for $menu in //menu
+                return <menu>
+                        {$menu/@nom}
+                    </menu>
+        }
+    </results>
+```
+
+**Résultat**
+
+```xml
+    <results>
+        <menu nom="buffet"/>
+        <menu nom="gourmet"/>
+        <menu nom="specialites lyonnaises"/>
+        <menu nom="vegetarien"/>
+        <menu nom="standard"/>
+        <menu nom="enfant"/>
+        <menu nom="big"/>
+        <menu nom="assiette printaniere"/>
+        <menu nom="salade d'ete"/>
+        <menu nom="menu d'automne"/>
+        <menu nom="menu d'hiver"/>
+    </results>
+```
+
+- Donner le nom et le prix de tous les menus dont le prix est inférieur à 100
+
+```xquery
+    <resultats>
+        { //menu[@prix<100] }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <results>
+        <menu nom="standard" prix="35"/>
+        <menu nom="enfant" prix="20"/>
+        <menu nom="big" prix="49"/>
+        <menu nom="assiette printaniere" prix="50"/>
+        <menu nom="salade d'ete" prix="30"/>
+        <menu nom="menu d'hiver" prix="99"/>
+    </results>
+```
+
+- Donner le nom des restaurants 2 étoiles avec leur nom de menu
+
+```xquery
+    <results>
+    {
+        for $resto in//restaurant[@etoile=2]
+            return
+                <restaurant nom="{$resto/@nom}">
+                {
+                    for $menu in $resto/menu
+                    return
+                    <menu nom="{$menu/@nom}">
+                    </menu>
+                }
+                </restaurant>
+    }
+    </results>
+```
+
+**Résultat**
+
+```xml
+    <results>
+        <restaurant nom="chez Bocuse">
+        <menu nom="specialites lyonnaises"/>
+        <menu nom="vegetarien"/>
+        </restaurant>
+    </results>
+```
+
+- Donner le nom de chaque restaurant avec son numéro de département
+
+```xquery
+    <results>
+        {
+            for $resto in//restaurant
+            let $v := //ville[@nom=$resto/@ville]
+            return
+                <restaurant nom="{$resto/@nom}" departement="{$v[@nom=$resto/@ville]/@departement}">
+                </restaurant>
+        }
+    </results>
+```
+
+**Résultat**
+
+```xml
+    <results>
+        <restaurant nom="la tour d'argent" departement="75"/>
+        <restaurant nom="chez Bocuse" departement="69"/>
+        <restaurant nom="MacDo" departement="84"/>
+        <restaurant nom="Les 4 saisons" departement="75"/>
+    </results>
+```
+
+- Quels sont les restaurants ayant (au moins) un menu dont le prix est égal au tarif de visite du plus
+beau monument de la ville ? Donner le nom du restaurant et le tarif.
+
+```xquery
+    <results>
+    {
+        for $pbm in //ville[plusBeauMonument], $restaurant in //restaurant
+        where $restaurant[@ville = $pbm/@nom]/menu[@prix=$pbm/plusBeauMonument/@tarif]
+            let $m := $pbm/plusBeauMonument
+            return 
+                <result>
+                    <restaurant nom="{$restaurant/@nom}"></restaurant>
+                    <tarif_monument prix="{$m/@tarif}"></tarif_monument>
+                </result>
+    }
+    </results
+```
+
+**Résultat**
+
+```xml
+    <results>
+        <result>
+        <restaurant nom="Les 4 saisons"/>
+            <tarif_monument prix="30"/>
+        </result>
+    </results>
+```
+
+#### 2) Présentation de données
+
+Pour cette exercice on reste toujours dans la base qu'on avait rechargé à partir de guide.xml
+
+- Définir la requête tableau.xql qui formate tous les restaurants dans un tableau XHTML. Une ligne du tableau
+contient le nom, la ville et le nombre d'étoiles du restaurant. Les restaurants sont triés par nom dans l’ordre
+alphabétique.
+
+```xquery
+    <table>
+    <tr>
+    <th>Nom</th>
+    <th>Ville</th>
+    <th>Nombre d'étoiles</th>
+    </tr>
+    { 
+        for $restaurant in //restaurant
+        order by $restaurant/@nom
+        return
+            <tr> 
+                <td>{data($restaurant/@nom)}</td>
+                <td>{data($restaurant/@ville)}</td>
+                <td>{data($restaurant/@etoile)}</td>
+            </tr>
+    }
+    </table>
+```
+
+**Résultat**
+
+```html
+    <table>
+        <tr>
+            <th>Nom</th>
+            <th>Ville</th>
+            <th>Nombre d'étoiles</th>
+        </tr>
+        <tr>
+            <td>Les 4 saisons</td>
+            <td>Paris</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>MacDo</td>
+            <td>Avignon</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>chez Bocuse</td>
+            <td>Lyon</td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <td>la tour d'argent</td>
+            <td>Paris</td>
+            <td>3</td>
+        </tr>
+    </table>
+```
+
+- Définir la requête liste.xql qui présente la structure arborescente des éléments d'un document XML quelconque, sous la forme de listes XHTML imbriquées avec les éléments \<ul> (liste), et \<li> (élément de liste).
+
+```xquery
+    declare namespace functx = "http://www.functx.com";
+    declare function functx:path-to-node
+    ( $nodes as node()* )  as xs:string* {
+
+    $nodes/string-join(ancestor-or-self::*/name(.), '/')
+    } ;
+    
+    let $root := name(/)
+    for $element in //*
+        return count(tokenize(functx:path-to-node($element),'/'))
 ```
