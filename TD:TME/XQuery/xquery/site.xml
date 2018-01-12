@@ -68,7 +68,7 @@
    <collection idC='c34' idU='m62'>
              <nom> Photos preferees</nom>
              <publication idP='p354' date='02-01-2016'/>
-	<publication idP='p442' date='02-01-2016'/>
+	         <publication idP='p442' date='02-01-2016'/>
              <publication idP='p553' date='02-01-2016'/>
     </collection>
 </collections>

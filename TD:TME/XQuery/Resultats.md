@@ -1370,3 +1370,146 @@ Pour cette question on reste toujours sur la base qu'on a rechargé à partir de
         </resultat>
     </resultats>
 ```
+
+- Dans la suite de l'exercice 2 da la séance 2 on récupère le fichier site.xml et sur la base construit à partir de ce fichier on réponds aux question suivantes.
+
+- **Question 6** <br>
+Les appareils photo qui ont été utilisés pour faire plusieurs photos. Chaque appareil doit apparaître **_une seule_** fois dans le résultat. Le résultat doit satisfaire la DTD suivante:
+
+```dtd
+    < !ELEMENT résultats (appareil)*>
+    < !ELEMENT appareil EMPTY>
+    < !ATTLIST appareil nom CDATA>
+```
+
+```xquery
+    <resultats>
+        {
+        for $appareil in distinct-values(//photo/appareil)
+        where count(//photo[appareil=$appareil])>1
+            return 
+            <appareil nom="{$appareil}"/>
+        }
+    </resultats>
+```
+
+**Résultat**
+
+```xml
+    <resultats>
+        <appareil nom="Samsung T1"/>
+        <appareil nom="Nikon F1"/>
+        <appareil nom="Canon D50"/>
+    </resultats>
+```
+
+- **Question 7** <br/>
+    Pour chaque format de photo, le nombre total de photos de ce format qui ont été publiées dans **_chaque collection_**. Le nombre total sera affiché dans un élément \<nb>. S'il n'y a pas de photo avec un format donné dans une certaine collection, on affiche seulement le nom de la collection, **_l'élément \<nb> ne sera pas affiché_**. Chaque format doit apparaître une seule fois dans le résultat. Le résultat doit satisfaire la DTD suivante :
+
+    ```dtd
+        < !ELEMENT résultats (format)*>
+        < !ELEMENT format (collection)*>
+        < !ATTLIST format nom CDATA>
+        < !ELEMENT collection (#PCDATA|nb) *>
+        < !ELEMENT nb (#PCDATA)>
+    ```
+
+    Un exemple de fragment du document xml résultat correspondant au format 'jpeg est le suivant:
+
+    ```xml
+        <résultats>
+            <format nom='jpeg'>
+                <collection> Pour les copains           <nb>2</nb> 
+                </collection>
+                <collection> Collection publique </collection>
+                <collection>Photos préférées </collection>
+            </format>
+        ....
+        <résultats>
+    ```
+
+```xquery
+    for $format in distinct-values(//photo/format)
+        let $photos := //photo[format=$format]
+        return
+            <format nom ="{ $format }">
+                {
+                for $collection in //collection
+                    let $publications := $collection//publication
+                    let $intersection := 
+                        for $publication in $publications , $photo in $photos
+                        where $publication/@idP = $photo/@idP
+                        return <nb>{count($photo)}</nb>
+                    return 
+                    <collection>
+                        { data($collection/nom) }
+                        {
+                        if (count($intersection)>0)
+                        then (
+                            <nb>{count($intersection)}</nb>
+                        )
+                        else()
+                        }
+                    </collection>
+                }
+            </format>
+```
+
+**Résultat**
+
+```xml
+    <format nom="jpeg">
+        <collection>Pour les copains<nb>2</nb>
+        </collection>
+        <collection>Collection publique</collection>
+        <collection>Photos preferees</collection>
+    </format>
+    <format nom="bmp">
+        <collection>Pour les copains</collection>
+        <collection>Collection publique<nb>1</nb>
+        </collection>
+        <collection>Photos preferees</collection>
+    </format>
+    <format nom="gif">
+        <collection>Pour les copains</collection>
+        <collection>Collection publique</collection>
+        <collection>Photos preferees<nb>3</nb>
+        </collection>
+    </format>
+```
+
+- **Question 8** <br/>
+     On considère la requête XQuery **R** suivante:
+```xquery
+    <résultats>
+        {
+            for $u1 in document("site.xml")//utilisateur,
+            $u2 in document("site.xml")//utilisateur[@idU != $u1/@idU]
+                let $a := for $v in
+                distinct(document("site.xml")//photo[//collection[@idU=$u1/@idU]/publication/@idP=@idP]
+                /appareil)
+                where
+                document("site.xml")//photo[//collection[@idU=$u2/@idU]/publication/@idP=@idP]/appareil=$v
+                return $v
+                where exists($a)
+                return <utilisateurs id1="{$u1/@idU}" id2="{$u2/@idU}">
+                { $a}
+                </utilisateurs>
+        }
+    <résultats>
+```
+
+On lance ce requête en supprimant les expressions document("site.xml") dans la base qu'on avait chargé depuis le fichier site.xml.
+Le résultat de ce requête est le suivant
+```xml
+    <resultats>
+    <utilisateurs id1="m23" id2="m56">Samsung T1</utilisateurs>
+    <utilisateurs id1="m23" id2="m62">Nikon F1</utilisateurs>
+    <utilisateurs id1="m56" id2="m23">Samsung T1</utilisateurs>
+    <utilisateurs id1="m62" id2="m23">Nikon F1</utilisateurs>
+    </resultats>
+```
+
+**Réponse**=
+
+Les couples d'utilisateurs qui ont pris des photos utilisant les mêmes appareils.
