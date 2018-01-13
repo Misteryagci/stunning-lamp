@@ -1,0 +1,21 @@
+base <http://example.org>
+prefix foaf: <http://xmlns.com/foaf/0.1/> 
+prefix rel: <http://www.perceive.net/schemas/relationship/> 
+prefix : <http://example.org/> 
+prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+prefix univ: <http://www.faculty.ac> 
+
+SELECT distinct ?amisDeAmisDeLiz
+WHERE
+{
+  {
+      {?amisDeLiz :friend :liz} UNION
+      {:liz :friend ?amisDeLiz}
+  } .
+  {
+      {?amisDeLiz :friend ?amisDeAmisDeLiz} UNION
+      {?amisDeAmisDeLiz :friend ?amisDeLiz}
+  } . 
+  FILTER NOT EXISTS { {?amisDeAmisDeLiz :friend :liz } UNION {:liz :friend ?amisDeAmisDeLiz }} .
+  FILTER (?amisDeAmisDeLiz NOT IN (:liz))
+}

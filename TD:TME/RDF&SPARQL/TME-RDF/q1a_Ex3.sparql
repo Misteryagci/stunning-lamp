@@ -5,7 +5,6 @@ prefix : <http://example.org/>
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 prefix univ: <http://www.faculty.ac> 
 
-SELECT *
-WHERE
-{
-}
+SELECT DISTINCT IRI <IRIref> ?nom WHERE {
+  ?nom ?relation ?personne.
+} 
