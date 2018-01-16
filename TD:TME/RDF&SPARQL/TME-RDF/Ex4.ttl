@@ -37,7 +37,7 @@
 
 
 #departement
-:john   f:Dept    "urbanism" .
+:john   f:Dept    "urbanism" .t
 :liz    f:Dept    "surgery" .
 :dan    f:Dept    "chemistry" .
 :larry  f:Dept    "culture" .
