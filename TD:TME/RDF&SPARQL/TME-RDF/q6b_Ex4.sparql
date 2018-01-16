@@ -4,6 +4,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX f: <http://www.cems.uwe.ac.uk/empdept/concept/>
 PREFIX : <http://www.abc.org/>
  
-SELECT * 
+SELECT ?person ?salaire 
 WHERE {
-} 
+    ?person f:Sal ?salaire .
+} ORDER BY DESC (?salaire) LIMIT 1

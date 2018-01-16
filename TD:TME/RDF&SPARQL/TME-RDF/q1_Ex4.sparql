@@ -4,6 +4,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX f: <http://www.cems.uwe.ac.uk/empdept/concept/>
 PREFIX : <http://www.abc.org/>
  
-SELECT * 
+SELECT ?name ?job
 WHERE {
-} 
+    ?name a f:emp .
+    ?name f:Job ?job
+} ORDER BY ?name

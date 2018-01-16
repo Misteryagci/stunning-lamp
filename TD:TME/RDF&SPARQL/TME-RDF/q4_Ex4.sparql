@@ -6,4 +6,7 @@ PREFIX : <http://www.abc.org/>
  
 SELECT * 
 WHERE {
+    ?name f:Job ?job .
+    MINUS { ?name f:Job "singer"}  .
+    MINUS { ?name f:Job "doctor"} 
 } 

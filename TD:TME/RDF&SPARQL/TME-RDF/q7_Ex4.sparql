@@ -1,0 +1,16 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX f: <http://www.cems.uwe.ac.uk/empdept/concept/>
+PREFIX : <http://www.abc.org/>
+ 
+SELECT DISTINCT ?emp1 ?emp2 ?salaire1 ?salaire2
+WHERE {
+    ?emp1 a f:emp .
+    ?emp2 a f:emp .
+    ?emp1 f:Sal ?salaire1 .
+    ?emp2 f:Sal ?salaire2 .
+    FILTER (?salaire1 = ?salaire2)
+    # Pour eviter les couples doublons on va utiliser une comparaison au lieu d'une inégalité
+    FILTER (str(?emp2) > str(?emp1))
+} 
